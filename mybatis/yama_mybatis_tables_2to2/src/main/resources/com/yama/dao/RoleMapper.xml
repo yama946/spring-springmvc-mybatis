@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yama.dao.RoleMapper">
+    <resultMap id="RoleUserMapper" type="Role">
+        <id property="id" column="rid"></id>
+        <result property="roleName" column="role_name"></result>
+        <result property="roleDesc" column="role_desc"></result>
+        <collection property="users" ofType="User">
+            <id property="id" column="id"></id>
+            <result property="username" column="username"></result>
+            <result property="address" column="address"></result>
+            <result property="sex" column="sex"></result>
+            <result property="birthday" column="birthday"></result>
+        </collection>
+    </resultMap>
+    <select id="findAll" resultType="role">findAllRoleUser
+        select * from user
+    </select>
+
+    <!--一对多关系的映射，看成多对多的一部分
+        要在查询用户的同时获得角色信息，且空的需要进行显示所以使用外连接，
+        因为是，双方都是一对多关系所以需要，一个中间表才能表明关系
+        因此要哦先外连接中间表后获得与另一张表关系映射，再外连接剩下的表
+    -->
+    <select id="findAllRoleUser" resultMap="RoleUserMapper">
+        select u.*,r.id rid,r.role_name,r.role_desc from role r
+          left join user_role ur on r.id = ur.rid
+          left join user u on u.id = ur.uid;
+    </select>
+</mapper>

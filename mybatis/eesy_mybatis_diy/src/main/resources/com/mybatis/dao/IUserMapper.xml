@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapper namespace="com.mybatis.dao.IUserMapper">
+<!--    配置查询所有-->
+    <select id="findAll" resultType="com.mybatis.pojo.User">
+        select * from user;
+    </select>
+</mapper>

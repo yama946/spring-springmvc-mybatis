@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yama.dao.AccountMapper">
+    <!--对于property中的属性由于对应Java中的变量名多以严格区分大小写-->
+    <resultMap id="accountUserMap" type="account">
+        <!--配置表中主键信息-->
+        <id property="id" column="id"></id>
+        <!--配置表中主键非信息-->
+        <result property="uid" column="uid"></result>
+        <result property="money" column="money"></result>
+        <!--associate中property对应实体类变量名，
+        column的值是account中的字段，要根据此字段到用户表中对应查询，一般为主表的外键
+        当使用立即加载时可以不适用该字段，但是，当使用延迟加载时需要使用
+        因为延迟加载的思想时：不自己去查询，而是当需要显示相应信息时，调用别人的方法去查询，
+        当然前提时两表之间要存在关联，这样才能使用本表中字段的值到他表中进行匹配查询
+            由于立即加载在执行查询语句时就已经固定，所以案例中讲解延迟加载多对一，和一对多的配置
+            要想实现延迟加载，在查询语句中就不能直接查询两张表，要让他表去查询，去封装然后返回，
+            延迟加载的内容只有调用才会去加载。
+            因此我们在一对一的实现延迟加载
+            (1)要对select标签中查询语句以及association中添加select属性
+            select属性：能够指定调用别的包中的方法去查询，查询参数为column的值。
+            (2)还要在主配置文件中使用setting标签进行设置相应的开启延迟加载的参数。
+        javatype标识要封装的类-->
+        <association property="user" javaType="User" column="uid" select="com.yama.dao.UserMapper.findById"></association>
+<!--        <association property="user" javaType="User" column="uid" >-->
+<!--            <id property="id" column="id"></id>-->
+<!--            <result property="username" column="username"></result>-->
+<!--            <result property="address" column="address"></result>-->
+<!--            <result property="sex" column="sex"></result>-->
+<!--            <result property="birthday" column="birthday"></result>-->
+<!--        </association>-->
+    </resultMap>
+
+
+    <select id="findAll" resultType="Account">
+        select * from account;
+    </select>
+
+
+    <select id="findById" parameterType="int" resultType="Account">
+        select * from account where id = #{id};
+    </select>
+    <!--使用自定义类，实现同时查询封装-->
+    <select id="findAllAccountUser" resultType="accountuser">
+        select a.*,u.username,u.address from account a
+         join user u on a.uid = u.id;
+    </select>
+
+    <select id="findAllAccountUser1" resultMap="accountUserMap">
+        select a.*,u.* from account a,user u where a.uid = u.id;
+    </select>
+<!--延迟加载配置-->
+    <!--延迟加载的思考：加载到他表中查询，是不是以及临时表中查询到的id
+            通过不再临时表中显示id字段，可知，需要查询表，生成临时表并根据临时表中的id到他表中进行索引查询。
+    -->
+    <select id="findLazyload" resultMap="accountUserMap">
+        select * from account;
+    </select>
+</mapper>

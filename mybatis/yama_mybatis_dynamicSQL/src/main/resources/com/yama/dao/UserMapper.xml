@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yama.dao.UserMapper">
+    <!--对于以下这些sql语句中重复的，可以用一个标签进行规定，相当于形成变量，使用时使用include标签进行引用
+    但是这必须是一条完整的语句，无法进行拼接，但是当不写分号时说明不是完整语句可以进行拼接-->
+    <sql id="selectMap">
+        select * from user
+    </sql>
+
+    <select id="findAll" resultType="User">
+        <include refid="selectMap"></include>
+    </select>
+
+
+    <select id="findById" parameterType="int" resultType="User">
+        select * from user where id = #{id};
+    </select>
+
+    <select id="findByName" parameterType="String" resultType="User">
+<!--         使用前者进行的模糊查询，会先进预编译，所以执行效率相对要高-->
+        select * from user where username like #{username};
+        <!--select * from user where username like '%${username}%';-->
+    </select>
+
+    <select id="queryVo" parameterType="QueryVo" resultType="User">
+        select * from user where username like #{user.username}
+    </select>
+
+    <!--根据条件进行查询,使用if标签进行判断，其中的test属性为判断条件
+    在sql中不能使用逻辑判断符号，当使用if时中间连接条件可以使用and，or，not，
+    也可以使用where标签直接进行包裹，等价于where 1=1
+    -->
+<!--    <select id="findUserByCondition"  parameterType="user" resultType="user">-->
+<!--        select * from user where 1=1-->
+<!--        <if test="username != null">-->
+<!--            and username=#{username}-->
+<!--        </if>-->
+<!--        <if test="sex != null">-->
+<!--            or sex = #{sex}-->
+<!--        </if>-->
+<!--    </select>-->
+    <select id="findUserByCondition"  parameterType="user" resultType="user">
+        select * from user
+        <where>
+            <if test="username != null">
+                and username=#{username}
+            </if>
+            <if test="sex != null">
+                or sex = #{sex}
+            </if>
+        </where>
+    </select>
+
+    <!--根据queryvo中的集合进行查询
+    foreach中属性说明：
+            collection:要扫描集合属性名称，
+            open：开始为
+            close:结束位置
+            item:标识参数名,标识遍历到的集合存储的位置，参数名自定义
+            separator:如何分割
+    -->
+    <select id="findUserInIds" parameterType="queryVo" resultType="user">
+        <!--select * from user-->
+        <include refid="selectMap"></include>
+        <where>
+            <if test="ids!=null">
+                <foreach collection="ids" open="and id in (" close=")" item="nameid" separator=",">
+                    #{nameid}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

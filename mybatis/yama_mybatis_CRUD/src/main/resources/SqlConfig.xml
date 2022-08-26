@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource=""><!--可以在外部使用一个properties文件来配置，通过resource或者url来进行引入-->
+        <property name="driver" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/mybatis?useSSL=false"/>
+        <property name="username" value="root"/>
+        <property name="password" value="yanruyi"/>
+    </properties>
+
+    <!--使用此标签可以，为全限定包进行配置别名，其中type是全限定类包名，alias是别名，不区分大小写
+    当包中的pojo类较多时，可以使用package标签,进行配置，此时别名就是类名
+    -->
+    <typeAliases>
+<!--        <typeAlias type="com.yama.domain.User" alias="user"></typeAlias>-->
+        <package name="com.yama.domain"/>
+    </typeAliases>
+
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${driver}"/>
+                <property name="url" value="${url}"/>
+                <property name="username" value="${username}"/>
+                <property name="password" value="${password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!--此标签中存在一个标签，package可以直接配置包而不用具体到类就可以被识别到并进行读取创建-->
+    <!--此mapper标签中存在resource和url属性，使用方法和properties标签中属性相同-->
+    <mappers>
+        <mapper resource="com/yama/dao/UserMapper.xml"/>
+        <package name="com.yama.dao"/>
+    </mappers>
+</configuration>

@@ -1,0 +1,13 @@
+target/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+# 可以忽略任何文件夹下以.iml结尾的文件
+*.iml
+*.ipr
+
+#当前项目指定忽略文件
+application-dev.*
+
+

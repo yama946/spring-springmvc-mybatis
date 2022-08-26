@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.crud.dao.UserMapper">
+    <resultMap id="userAccountMap" type="user">
+        <id property="id" column="id"></id>
+        <result property="username" column="username"></result>
+        <result property="birthday" column="birthday"></result>
+        <result property="sex" column="sex"></result>
+        <result property="address" column="address"></result>
+        <collection property="accounts" ofType="account">
+            <id property="id" column="id"></id>
+            <result property="uid" column="uid"></result>
+            <result property="money" column="money"></result>
+        </collection>
+    </resultMap>
+    <resultMap id="userRoleMap" type="user_role">
+        <id property="id" column="id"></id>
+        <result property="username" column="username"></result>
+        <result property="birthday" column="birthday"></result>
+        <result property="sex" column="sex"></result>
+        <result property="address" column="address"></result>
+        <collection property="roles" ofType="role">
+            <id property="id" column="rid"></id>
+            <result property="rolename" column="role_name"></result>
+            <result property="roledesc" column="role_desc"></result>
+        </collection>
+    </resultMap>
+    <!--    配置查询所有-->
+    <select id="findAll" resultMap="userAccountMap">
+        select u.*,a.* from user u left outer join account a on u.id = a.uid;
+    </select>
+
+    <!-- 根据用户id进行查询信息-->
+    <select id="findByRole" resultMap="userRoleMap">
+       select u.*,r.id as rid,r.role_name,r.role_desc from user u
+               left outer join user_role ur on u.id= ur.rid
+               left outer join role r on r.id= ur.uid;
+    </select>
+
+</mapper>

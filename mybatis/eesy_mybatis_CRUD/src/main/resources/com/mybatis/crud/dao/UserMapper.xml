@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatis.crud.dao.UserMapper">
+    <!--其中的id表示别名,此标签主要用来解决实体类与数据库之间名称不对成问题导致的无法封装-->
+<!--    <resultMap id="usermap" type="com.mybatis.crud.pojo.User">-->
+<!--        &lt;!&ndash;主键配置方式&ndash;&gt;-->
+<!--        <id property="" column=""></id>-->
+<!--        &lt;!&ndash; 非主键配置方式&ndash;&gt;-->
+<!--        <result property="" column=""></result>-->
+<!--    </resultMap>-->
+    <!--    配置查询所有-->
+    <select id="findAll" resultType="User">
+        select * from user;
+    </select>
+    <!-- 配置保存操作-->
+    <insert id="saveUser" parameterType="User">
+        <selectKey keyProperty="id" keyColumn="id" resultType="int" order="AFTER" >
+            select last_insert_id();
+        </selectKey>
+        insert into user(username,birthday,sex,address) values(#{username},#{birthday},#{sex},#{address});
+    </insert>
+    <!-- 用户的更新操作-->
+    <update id="updateUser" parameterType="User">
+        update user set username=#{username},birthday=#{birthday},sex=#{sex},address=#{address} where id = #{id};
+    </update>
+    <!-- 根据用户id删除用户-->
+    <delete id="deleteUser" parameterType="java.lang.Integer">
+        delete from user where id=#{uid};
+    </delete>
+    <!-- 根据用户id进行查询信息-->
+    <select id="findById" resultType="User" parameterType="Int">
+        select * from user where id =#{id};
+    </select>
+    <!-- 根据姓名模糊查询用户信息-->
+    <select id="findByName" resultType="User" parameterType="java.lang.String">
+        select * from user where username like #{name};
+    </select>
+    <!--通过聚合函数的使用来统计用户个数-->
+    <select id="findTotal" resultType="Int">
+        select count(id) from user;
+    </select>
+    <!-- 通过ognl表达式进行模糊-->
+    <select id="findByqueryVo" resultType="User" parameterType="com.mybatis.crud.pojo.QueryVo">
+        select * from user where username like #{u.username};
+    </select>
+    <!--结合条件语句进行查询-->
+    <select id="findByCondition" parameterType="user" resultType="user">
+        select * from user
+        <where>
+            <if test="username!=null" >
+                username = #{username}
+            </if>
+        </where>
+    </select>
+    <!--测试foreach的使用-->
+    <select id="findByIds" resultType="user" parameterType="com.mybatis.crud.pojo.QueryVo">
+        select * from user 
+        <where>
+            <if test="ids!=null and ids.size>0">
+               <foreach collection="ids" open="and id in (" close=")" item="uid" separator=",">
+                   #{uid}
+               </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

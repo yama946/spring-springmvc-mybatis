@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yama.dao.AccountMapper">
+    <!--对于property中的属性由于对应Java中的变量名多以严格区分大小写-->
+    <resultMap id="accountUserMap" type="account">
+        <!--配置表中主键信息-->
+        <id property="id" column="id"></id>
+        <!--配置表中主键非信息-->
+        <result property="uid" column="uid"></result>
+        <result property="money" column="money"></result>
+        <!--associate中property对应实体类变量名，column标识用什么字段进行连接获取，javatype标识要封装的类-->
+        <association property="user" javaType="User" column="uid">
+            <id property="id" column="id"></id>
+            <result property="username" column="username"></result>
+            <result property="address" column="address"></result>
+            <result property="sex" column="sex"></result>
+            <result property="birthday" column="birthday"></result>
+        </association>
+    </resultMap>
+
+
+    <select id="findAll" resultType="Account">
+        select * from account;
+    </select>
+
+
+    <select id="findById" parameterType="int" resultType="Account">
+        select * from account where id = #{id};
+    </select>
+
+    <select id="findAllAccountUser" resultType="accountuser">
+        select a.*,u.username,u.address from account a
+         join user u on a.uid = u.id;
+    </select>
+
+    <select id="findAllAccountUser1" resultMap="accountUserMap">
+        select a.*,u.* from account a,user u where a.uid = u.id;
+    </select>
+</mapper>

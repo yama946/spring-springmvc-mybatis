@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yama.dao.UserMapper">
+    <resultMap id="UserAccountMapper" type="User">
+        <id property="id" column="id"></id>
+        <result property="username" column="username"></result>
+        <result property="address" column="address"></result>
+        <result property="sex" column="sex"></result>
+        <result property="birthday" column="birthday"></result>
+        <!--此时由于account存在是以集合的形式因此标签不再使用associat而是使用collection来表示
+                属性说明：uesr中包含的属性名——property
+                         ofType属性的类型
+        -->
+        <collection property="accounts" ofType="account">
+            <id property="id" column="aid"></id>
+            <!--配置表中主键非信息-->
+            <result property="uid" column="uid"></result>
+            <result property="money" column="money"></result>
+        </collection>
+
+    </resultMap>
+
+    <select id="findAll" resultType="User">
+        select * from user
+    </select>
+
+
+    <select id="findById" parameterType="int" resultType="User">
+        select * from user where id = #{id};
+    </select>
+
+    <!--一对多关系的映射
+        此方法用于查找用户以及对应的账户信息，由于用户可能会存在不存在账户的问题，
+        但是仍然要进行显示，所以，我们使用左外连接的方式，用户表作为左表
+        外连接和内连接的最大就是，外连接会保留那些空值。
+    -->
+    <select id="findAllUserAccount" resultMap="UserAccountMapper">
+        select u.*,a.id aid,a.uid,a.money from user u left join account a on u.id = a.uid;
+    </select>
+</mapper>

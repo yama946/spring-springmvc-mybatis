@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC
+        "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!--配置mybatis主配置文件-->
+<configuration>
+    <environments default="mysql">
+<!--        配置mysql环境-->
+        <environment id="mysql">
+<!--            配置事务类型-->
+            <transactionManager type="JDBC"></transactionManager>
+<!--            配置数据源-->
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/mybatis?useSSL=false"/>
+                <property name="username" value="root"/>
+                <property name="password" value="yanruyi"/>
+            </dataSource>
+        </environment>
+    </environments>
+<!--    配置映射文件:当使用注解进行配置文件时，mapper中的属性应使用class属性，其中值应为类鹅全限定类名
+如果使用注解来配置的话，此处应该应用class属性指定被注解的到全限定类名
+<mappers>
+        <mapper resource="com/mybatis/dao/IDaoMapper.xml"/>
+    </mappers>
+-->
+    <mappers>
+        <mapper class="com.mybatis.dao.IDaoMapper" />
+    </mappers>
+
+</configuration>

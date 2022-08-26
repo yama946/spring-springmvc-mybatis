@@ -1,0 +1,14 @@
+一级缓存是自动生效的，
+增删改查的操作会引起一级缓存的清空操作。
+二级缓存的使用步骤：
+第一步：mybatis框架支持二级缓存（在SqlMapConfig.xml中配置）
+<settings>
+        <setting name="lazyLoadingEnabled" value="true"/>
+</settings>
+第二步：让当前映射文件支持二级缓存（在IUserDao.xml中配置）
+在配置文件中配置cache标签
+<cache />
+第三步：让当前查询操作支持二级缓存（在select标签中配置）
+<select useCache="true">
+........
+</select>
